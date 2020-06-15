@@ -15,9 +15,9 @@ class CreateReferencesTable extends Migration
     {
         Schema::create('references', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('company_name');
-            $table->text('contact');
-            $table->text('phone');
+            $table->string('company_name');
+            $table->string('contact');
+            $table->string('phone');
             $table->integer('trucker_id')->unsigned();
             $table->foreign('trucker_id')
                 ->references('id')

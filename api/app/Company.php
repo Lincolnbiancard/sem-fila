@@ -11,11 +11,11 @@ class Company extends Model
      * @var array
      */
     protected $fillable = [
-        'cnpj',
         'type',
         'name',
         'trade_name',
         'user_id',
+        'address_id'
     ];
 
     public $table = 'company';
@@ -25,5 +25,10 @@ class Company extends Model
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    public function address()
+    {
+        return $this->hasOne(Address::class, 'id', 'address_id');
     }
 }

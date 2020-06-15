@@ -18,7 +18,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        return User::with('company', 'address')->paginate(100);
+        return Company::with('user', 'address')->paginate(100);
     }
 
     /**
@@ -42,12 +42,17 @@ class CompanyController extends Controller
         
         try {
             $data               = $request->all();
+            //Salva o endereço 
+            $address            = new Address();
+            $createdAddress     = $address->create($data);
+            
+            //Salva a empresa
             $company            = new Company;
-            $data['user_id']    = Auth::id(); //Trocar por Auth::id()
+            $data['user_id']    = Auth::id(); 
+            $data['address_id'] = $createdAddress->id;
             $createdCompany     = $company->create($data);
             
-            
-            return response()->json($createdCompany);
+            return response()->json([$createdCompany, $createdAddress]);
         } catch (\Throwable $th) {
             return response()->json([
                 'type_route' => 'post',
@@ -56,8 +61,14 @@ class CompanyController extends Controller
                     'type',
                     'name',
                     'trade_name',
-                    'user_id',
-                ]
+                    'street',
+                    'type_address', // ex: apartamento, casa, condomínio
+                    'number',
+                    'zip_code',
+                    'city',
+                    'state'
+                ],
+                'message' => $th
             ]);
         }
     }
@@ -70,7 +81,7 @@ class CompanyController extends Controller
      */
     public function show($id)
     {
-        $trucker = User::with(['company', 'address'])->findOrFail($id);
+        $trucker = Company::with('user', 'address')->findOrFail($id);
 
         return response()->json($trucker);
 
@@ -124,7 +135,7 @@ class CompanyController extends Controller
      */
     public function destroy($id)
     {
-        $deletedId = User::where('id', $id)->delete();
+        $deletedId = Company::where('id', $id)->delete();
 
         $success = '';
         

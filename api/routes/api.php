@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Http\Request;
@@ -21,7 +22,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user(); 
 });
 
-Route::resource('/empresas', 'CompanyController');
 Route::resource('/enderecos', 'AddressController');
 Route::resource('/negociacao', 'ShippingController');
 
@@ -29,6 +29,7 @@ Route::resource('/negociacao', 'ShippingController');
 Route::group(['middleware' => 'auth:api'], function() {
     //Rotas autenticadas
     Route::resource('/caminhoneiros', 'TruckerController'); 
+    Route::resource('/empresas', 'CompanyController');
 });
 
 

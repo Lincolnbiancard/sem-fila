@@ -8,6 +8,7 @@ use App\Trucker;
 use App\User;
 use App\Truck;
 use App\Address;
+use App\Reference;
 
 
 class TruckerController extends Controller
@@ -19,7 +20,7 @@ class TruckerController extends Controller
      */
     public function index()
     {
-        return Trucker::with('user', 'address', 'truck')->paginate(100);
+        return Trucker::with('user', 'address', 'truck', 'references')->paginate(100);
     }
 
     /**
@@ -47,17 +48,23 @@ class TruckerController extends Controller
             //Salva o endereço 
             $address                = new Address();
             $createdAddress         = $address->create($data);
+
             //Salva o caminhoneiro
             $trucker                = new Trucker;
             $data['user_id']        = Auth::id(); 
             $data['address_id']     = $createdAddress->id; 
             $createdTrucker         = $trucker->create($data);
+
             //Salva o caminhão 
             $truck                  = new Truck();
             $data['trucker_id']     = $createdTrucker->id;
             $createdTruck           = $truck->create($data);
 
-            return response()->json([$createdTrucker, $createdAddress, $createdTruck]);
+            // Salva as referências
+            $reference              = new Reference();
+            $createdReference       = $reference->create($data);
+
+            return response()->json([$createdTrucker, $createdAddress, $createdTruck, $createdReference]);
         } catch (\Throwable $th) {
             return response()->json([
                 'Values required' => [
@@ -68,15 +75,18 @@ class TruckerController extends Controller
                     'mopp',
                     'capacity',
                     'truck_plate',
-                    'type',
+                    'type_truck',
                     'support',
                     'user_id',
                     'street',
-                    'type',
+                    'type_address',
                     'number',
                     'zip_code',
                     'city',
-                    'state'
+                    'state',
+                    'company_name',
+                    'contact',
+                    'phone',
                 ],
                 'message' => $th
             ]);
@@ -92,7 +102,7 @@ class TruckerController extends Controller
      */
     public function show($id)
     {
-        $trucker = User::with(['trucker', 'references', 'address', 'truck'])->findOrFail($id);
+        $trucker = Trucker::with('user', 'address', 'truck', 'references')->findOrFail($id);
 
         return response()->json($trucker);
     }
@@ -127,13 +137,12 @@ class TruckerController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'Values required' => [
-                    'antt_register',
+                    'rntrc',
                     'cnh',
                     'cpf_cnpj',
                     'rg',
                     'crlv',
-                    'mopp',
-                    'user_id'
+                    'mopp'
                 ]
             ]);
         }
@@ -147,7 +156,7 @@ class TruckerController extends Controller
      */
     public function destroy($id)
     {
-        $deletedTrucker = User::where('id', $id)->delete();
+        $deletedTrucker = Trucker::where('id', $id)->delete();
 
         $success = '';
         
