@@ -22,6 +22,7 @@
 - Realização Profissional (Desvalorização; Descaso) 
 - Insegurança (Assaltos; Acidentes) 
 - Saúde Emocional (Estresse; Saudade da família)
+- Eliminar as filas físicas de caminhões
 
 ---
 
